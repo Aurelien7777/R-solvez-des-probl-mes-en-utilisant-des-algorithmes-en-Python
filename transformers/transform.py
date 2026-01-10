@@ -1,25 +1,29 @@
 import csv
 
+"""Chemin du fichier contenant les datas"""
 CSV_PATH = "C:/OPENCLASSROOMS/PROJET 7 Résolvez des problèmes en utilisant des algorithmes en Python/CODE/liste_actions.csv"
 
 class Action:
-    def __init__(self, name, cost, rate):
+    def __init__(self, name, cost, rate, gain):
         self.name = name
         self.cost = cost 
         self.rate = rate
+        self.gain = gain
         
     def calculate_gain(self):
+        """Fonction permettant de calculer le gain généré par une action"""
+        
         return self.cost * self.rate
         
     def __repr__(self):
         """Représentation textuelle de l'objet Action pour le débogage."""
+        
         return (
-            f"Action(nom ={self.name},\n" 
-            f"Coût={self.cost},\n" 
-            f"Bénéfice={self.rate}")
-    
-
-
+            f"Action : \n"
+            f"Nom = {self.name}\n" 
+            f"Coût = {self.cost}\n" 
+            f"Bénéfice = {self.rate}\n"
+            f"Gain = {self.gain}")
 
 
 class Transformer:
@@ -27,14 +31,17 @@ class Transformer:
     # encoding="cp1252" : utile car le fichier contient des caractères comme "Coût" et "Bénéfice"
     # newline="" : recommandé avec csv pour éviter des lignes vides sur certains systèmes
     def action_loader(self, csv_file):
+        """Cette fonction charge le contenu du fichier à exploiter
+            et retourne une liste de dictionnaire
+        """
         
         actions_brut = []
-        """Cette fonction charge le contenu du fichier à exploiter"""
         with open(csv_file, "r", encoding="cp1252", newline="") as fichier:
         # DictReader lit chaque ligne du CSV et la transforme en dictionnaire
         # delimiter=";" : car ton CSV est séparé par des points-virgules
             lecteur = csv.DictReader(fichier, delimiter=";")
             for ligne in lecteur:
+                #print(ligne)
                 actions_brut.append(ligne)
 
         return actions_brut
@@ -44,6 +51,7 @@ class Transformer:
         Cette fonction s'occupe de la transformation des données du CSV 
         pour exploitation dans le programme
         """
+        
         #Initialisation de la liste qui va stocker les actions objets
         actions = []
             
@@ -63,20 +71,18 @@ class Transformer:
             
             
             #Création de l'instance action
-            action = Action(name, cost, rate)
+            action = Action(name, cost, rate, gain=0)
             # On calcule le profit en euros pour UNE action
             gain = action.calculate_gain()
+            action.gain = gain
             
             # On ajoute cette action dans la liste actions
             actions.append(action)
             
         # Vérification simple : on affiche combien d’actions on a chargées
-        print("Nombre d'actions chargées :", len(actions))
+        #print("Nombre d'actions chargées :", len(actions))
         
         return actions
 
 
-transformer = Transformer()
-lecteur = transformer.action_loader(CSV_PATH)
-transformer.transform_data(lecteur)
 

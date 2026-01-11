@@ -9,53 +9,56 @@ BUDGET_MAX = 500
 transformer = Transformer()
 lecteur = transformer.action_loader(CSV_PATH)
 actions = transformer.transform_data(lecteur)
-print()
-print("TEST")
-print(actions[0])
-print(type(actions[0]))
-print(dir(actions[0]))
-print()
-print("Le prx de l'action numéro 1 est : ",actions[0].cost)
-print("Le prx de l'action numéro 2 est : ",actions[1].cost)
 
 def brute_force_best(actions, budget):
+    """Cette fonction permet de sélectionner la combinaison
+    permettant de réaliser un maximum de gain avec un investissement limité
+    """
+    
     best_combo = []
     best_gain = 0.0
     best_cost = 0.0
 
     number_total_actions = len(actions)
 
-    #Boucle sur le nombre d'actions contenu dans la liste "actions"
-    for size_combination in range(1, number_total_actions + 1): 
-        for combo in combinations(actions, size_combination):
+    # Boucle sur le nombre d'action(20) contenu dans la liste "actions"
+    # "size_combination" = taille de la combinaison (Détermine si "ACTION" va être testé avec 1, 2, 3 etc éléments)
+    for size_combination in range(1, number_total_actions + 1): #Nous allons boucler "number_total_actions" + 1 SOIT 20 fois
+        
+        # Dans la boucle ci-dessous, la liste "actions" est l'itérable, c'est à dire, l'objet contenant les éléments à combiner
+        # "size_combination" = taille de la combinaison (Détermine si "ACTION" va être testé avec 1, 2, 3 etc éléments)
+        # "combo" contient une combinaison d'action de taille "size_combination" (Exemple : action-1, action-2, action-4)
+        # Pour chaque action provenant de "actions", tu vas tester des combinaisons d'actions de taille "size_combinations" 
+        # En fonction de la taille de la combinaison "size_combination", il va y avoir plus ou moins d'actions dans "combo"
+        # Comment les actions sont ajoutées dans "combo"? "combo" vient puiser les actions dans la liste "actions" placée en paramètre de "combinations"
+        
+        for combo in combinations(actions, size_combination): 
+            # "combo"est un tuple contenant les actions présentes dans une combinaison
+            # Par exemple "action-1" est testé avec toutes les tailles de combinaisons possible allant de 1 à 20, si les conditions sont réunies (BUDGET_MAX)
             
-            #coût = la somme des prix de chaque action présent dans la combinaison
+            # coût = la somme des prix de chaque action présent dans la combinaison
             cost = sum(action.cost for action in combo) 
+            # "combo"est un tuple contenant les actions présentes dans une combinaison
+            # Création d'une une expression génératrice nommée "cost", dans laquelle pour chaque action présente dans combo, on récupère son coût (On additionne les coûts)
+            # La valeur action.cost est récupérée à partir de "combo" qui représente une combinaison testée
             
-            #Si le côut de la combinaison est inférieur ou égal à 500€
+            # Si le côut de la combinaison est inférieur ou égal à 500€ soit le BUDGET_MAX
             if cost <= budget:
                 
-                #Gain est égal à la somme des gains que génère chaque action
-                gain = sum(action.rate for action in combo)  
+                # Gain est égal à la somme des gains que génère chaque action
+                gain = sum(action.gain for action in combo)  
+                # Création d'une compréhension de liste nommée "gain", dans laquelle pour chaque action présente dans "combo", on récupère son gain générable
+                # La valeur action.rate est récupérée à partir de "combo" qui représente une combinaison testée
                 
-                #Si le gain est supérieur au meilleur gain enregistré
+                # Si le gain est supérieur au meilleur gain enregistré
                 if gain > best_gain:
-                    # Le meilleur gain devient celui de la combinaison enregistrée
                     best_gain = gain
                     best_cost = cost
                     best_combo = combo
-    return best_combo #, best_cost, best_gain
+    return best_combo, best_cost, best_gain
 
-
-print()
 best_invest = brute_force_best(actions, BUDGET_MAX)
-print("Le meilleur investissement est :", best_invest)
-print()
 print(type(best_invest))
 
-
-"""
-i = 0
 for invest in best_invest:
-    print(f"Investissement {i} : {invest}")
-    print()"""
+    print("DEBUG",invest)

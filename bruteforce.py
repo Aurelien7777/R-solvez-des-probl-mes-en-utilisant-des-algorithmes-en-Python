@@ -1,5 +1,4 @@
 from transformers.transform import Transformer
-from transformers.transform import Action
 from itertools import combinations
 
 """Chemin du fichier contenant les datas"""

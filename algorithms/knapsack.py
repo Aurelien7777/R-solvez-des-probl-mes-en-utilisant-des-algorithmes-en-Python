@@ -46,6 +46,50 @@ def knapsack_meilleure_strategie_2d(actions, budget_max_euros):
     return actions_selectionnees, cout_total, gain_total
 
 
+def knapsack_meilleure_strategie_dataset(actions, budget_max_euros):
+    budget_max_centimes = int(round(budget_max_euros * 100))
+    nombre_actions = len(actions)
+
+    couts_centimes = [int(round(a.cost * 100)) for a in actions]
+    gains_centimes = [int(round(a.gain * 100)) for a in actions]
+
+    meilleur_gain_par_budget = [0] * (budget_max_centimes + 1)
+
+    # Mémoire compacte : 1 byte par budget et par action
+    choix_action = [bytearray(budget_max_centimes + 1) for _ in range(nombre_actions)]
+
+    for index_action in range(nombre_actions):
+        cout_action = couts_centimes[index_action]
+        gain_action = gains_centimes[index_action]
+
+        if cout_action <= 0 or gain_action <= 0:
+            continue
+        if cout_action > budget_max_centimes:
+            continue
+
+        for budget_en_cours in range(budget_max_centimes, cout_action - 1, -1):
+            gain_sans_action = meilleur_gain_par_budget[budget_en_cours]
+            gain_avec_action = gain_action + meilleur_gain_par_budget[budget_en_cours - cout_action]
+
+            if gain_avec_action > gain_sans_action:
+                meilleur_gain_par_budget[budget_en_cours] = gain_avec_action
+                choix_action[index_action][budget_en_cours] = 1
+
+    # Reconstruction
+    actions_selectionnees = []
+    budget_en_cours = budget_max_centimes
+
+    for index_action in range(nombre_actions - 1, -1, -1):
+        if choix_action[index_action][budget_en_cours] == 1:
+            actions_selectionnees.append(actions[index_action])
+            budget_en_cours -= couts_centimes[index_action]
+
+    actions_selectionnees.reverse()
+
+    cout_total = sum(a.cost for a in actions_selectionnees)
+    gain_total = sum(a.gain for a in actions_selectionnees)
+
+    return actions_selectionnees, cout_total, gain_total
 
 
 # -------------------------

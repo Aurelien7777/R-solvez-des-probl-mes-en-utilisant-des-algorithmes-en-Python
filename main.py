@@ -1,45 +1,44 @@
 import time
-from transformers.transform import Transformer
-from algorithms.knapsack import (
-    knapsack_meilleure_strategie,
-    knapsack_meilleure_strategie_dataset
-)
+from data_transformers.transform import Transformer
+from algorithms.optimized_dataset import knapsack_meilleure_strategie
 
+# ===============================
+# CONFIGURATION
+# ===============================
 BUDGET_MAX = 500
 
-def run_csv_initial():
-    print("\n=== CSV INITIAL (20 actions) ===")
-    transformer = Transformer()
-    raw_actions = transformer.action_loader("data/liste_actions.csv")
-    actions = transformer.transform_data(raw_actions)
+CSV_INITIAL= "C:/OPENCLASSROOMS/PROJET 7 Résolvez des problèmes en utilisant des algorithmes en Python/CODE/liste_actions.csv"
+DATASET1 = r"C:\OPENCLASSROOMS\PROJET 7 Résolvez des problèmes en utilisant des algorithmes en Python\SECTION 3\dataset1_Python+P7.csv"
+DATASET2 = r"C:\OPENCLASSROOMS\PROJET 7 Résolvez des problèmes en utilisant des algorithmes en Python\SECTION 3\dataset2_Python+P7.csv"
 
-    start = time.time()
-    actions_choisies, cout, gain = knapsack_meilleure_strategie(actions, BUDGET_MAX)
-    end = time.time()
+# Choix du fichier à utiliser
+FICHIER_SELECTIONNE = CSV_INITIAL   # change ici si besoin
 
-    print("Coût total :", round(cout, 2), "€")
-    print("Gain total :", round(gain, 2), "€")
-    print("Actions :", [a.name for a in actions_choisies])
-    print("Temps :", round(end - start, 4), "s")
+# ===============================
+# CHARGEMENT DES DONNÉES
+# ===============================
+transformer = Transformer()
 
+if FICHIER_SELECTIONNE == CSV_INITIAL:
+    lignes = transformer.action_loader(FICHIER_SELECTIONNE)
+    actions = transformer.transform_data(lignes)
+else:
+    lignes = transformer.action_loader_dataset(FICHIER_SELECTIONNE)
+    actions = transformer.transform_data_dataset(lignes)
 
-def run_dataset(path, label):
-    print(f"\n=== {label} ===")
-    transformer = Transformer()
-    raw = transformer.action_loader_dataset(path)
-    actions = transformer.transform_data_dataset(raw)
+# ===============================
+# EXECUTION KNAPSACK
+# ===============================
+start = time.time()
+#gain_total = knapsack_meilleure_strategie(actions, BUDGET_MAX)
+actions_selectionnees, cout_total, gain_total = knapsack_meilleure_strategie(actions, BUDGET_MAX)
 
-    start = time.time()
-    actions_choisies, cout, gain = knapsack_meilleure_strategie_dataset(actions, BUDGET_MAX)
-    end = time.time()
+end = time.time()
 
-    print("Coût total :", round(cout, 2), "€")
-    print("Gain total :", round(gain, 2), "€")
-    print("Nombre d'actions :", len(actions_choisies))
-    print("Temps :", round(end - start, 4), "s")
-
-
-if __name__ == "__main__":
-    run_csv_initial()
-    run_dataset("data/dataset1_Python+P7.csv", "DATASET 1")
-    run_dataset("data/dataset2_Python+P7.csv", "DATASET 2")
+# ===============================
+# AFFICHAGE
+# ===============================
+print("Actions valides :", len(actions))
+print("Actions rejetées :", len(transformer.rejected_action))
+print("Gain total :", round(gain_total, 2), "€")
+print("Temps d'exécution :", round(end - start, 4), "sec")

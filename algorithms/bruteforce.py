@@ -1,13 +1,5 @@
-from transformers.transform import Transformer
+from data_transformers.transform import Transformer
 from itertools import combinations
-
-"""Chemin du fichier contenant les datas"""
-CSV_PATH = "C:/OPENCLASSROOMS/PROJET 7 Résolvez des problèmes en utilisant des algorithmes en Python/CODE/liste_actions.csv"
-BUDGET_MAX = 500
-
-transformer = Transformer()
-lecteur = transformer.action_loader(CSV_PATH)
-actions = transformer.transform_data(lecteur)
 
 def brute_force_best(actions, budget):
     """Cette fonction permet de sélectionner la combinaison
@@ -55,9 +47,3 @@ def brute_force_best(actions, budget):
                     best_cost = cost
                     best_combo = combo
     return best_combo, best_cost, best_gain
-
-best_invest = brute_force_best(actions, BUDGET_MAX)
-print(type(best_invest))
-
-for invest in best_invest:
-    print("DEBUG",invest)
